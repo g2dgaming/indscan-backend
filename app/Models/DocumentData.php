@@ -20,14 +20,15 @@ class DocumentData extends Model
     public function setImageAttribute($value){
         $img=Image::make($value)->encode('png', 75);
         $fileName=time().'.png';
-        $path=Storage::put($fileName,'public');
+        $path=Storage::put('public/'.$fileName,'public');
         $url= Storage::url('public/'.$fileName);
         $this->attributes['image']=$url;
     }
     public function getImageAttribute($value){
-        return config('app.url').$value;
+        return asset($value);
     }
-    public function document(){
+    public function document()
+    {
         return $this->belongsTo(Document::class);
     }
 }

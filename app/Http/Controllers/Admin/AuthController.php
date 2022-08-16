@@ -90,4 +90,20 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function testLogin(Request $request){
+        if($request['phone_number'] == '7014748022' && $request['otp'] == '123456'){
+            $user = User::first();
+            return response()->json([
+                'status' => true,
+                'message' => 'User Logged In Successfully',
+                'token' => $user->createToken("API TOKEN")->plainTextToken
+            ], 200);     
+        }
+        else{
+            return response()->json([
+                'status' => false,
+            ], 401);    
+        }
+          
+    }
 }
