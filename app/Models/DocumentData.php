@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Facades\Storage;
-
+use Log;
 class DocumentData extends Model
 {
     use HasFactory;
@@ -18,9 +18,9 @@ class DocumentData extends Model
         return json_decode($value);
     }
     public function setImageAttribute($value){
-        $img=Image::make($value)->encode('png', 75);
-        $fileName=time().'.png';
-        $path=Storage::put('public/'.$fileName,'public');
+        $resize=Image::make($value)->encode('jpg',80);
+        $fileName=time().'.jpg';
+        $path=Storage::put('public/'.$fileName,$resize->__toString());
         $url= Storage::url('public/'.$fileName);
         $this->attributes['image']=$url;
     }
@@ -30,6 +30,9 @@ class DocumentData extends Model
     public function document()
     {
         return $this->belongsTo(Document::class);
+    }
+    public function addresses(){
+        return $this->hasMany(Entities/Address::class);
     }
 }
 
