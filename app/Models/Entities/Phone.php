@@ -9,4 +9,5 @@ class Phone extends Model
 {
     use HasFactory;
     use \App\Traits\isEntity;
+    protected $fillable=['phone_number'];
 }

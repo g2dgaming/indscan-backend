@@ -9,4 +9,6 @@ class DateTime extends Model
 {
     use HasFactory;
     use \App\Traits\isEntity;
+    protected $fillable=['datetime'];
+
 }

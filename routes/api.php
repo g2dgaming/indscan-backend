@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SearchController;
+
 
 
 /*
@@ -33,4 +35,7 @@ Route::group(['middleware'=>['auth:sanctum','corsfix'],'prefix'=>'documents' ],f
  });
  Route::group(['middleware'=>'auth:sanctum','prefix'=>'category' ],function(){
     Route::get('/',[CategoryController::class,'index'])->name('category');        
+ });
+ Route::group(['middleware'=>['auth:sanctum']],function(){
+    Route::get('/search',[SearchController::class,'index']);        
  });

@@ -9,4 +9,5 @@ class Tracking extends Model
 {
     use HasFactory;
     use \App\Traits\isEntity;
+    protected $fillable=['tracking_id'];
 }
