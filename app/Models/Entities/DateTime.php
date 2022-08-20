@@ -10,5 +10,7 @@ class DateTime extends Model
     use HasFactory;
     use \App\Traits\isEntity;
     protected $fillable=['datetime'];
+    const keyword_index='datetime';
+
 
 }

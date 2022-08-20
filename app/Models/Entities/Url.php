@@ -10,4 +10,7 @@ class Url extends Model
     use HasFactory;
     use \App\Traits\isEntity;
     protected $fillable=['url'];
+    const keyword_index='url';
+
+    
 }

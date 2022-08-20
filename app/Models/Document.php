@@ -25,9 +25,21 @@ class Document extends Model
         }
         $documentData->englishText=$data['englishText'];
         $documentData->hindiText=$data['hindiText'];
+        $documentData->thumbnail=$data['thumb'];
         $documentData->save();
-        $addresses=$data['entities']['address'];
         if($documentData->save()){
+            $entities=$data['entities'];
+            foreach($entities as $entity_key=>$entities_collection){                
+                if(isset(config('app.entities_query_builder')[$entity_key])){
+                    $class_name=config('app.entities_query_builder')[$entity_key];
+                    foreach($entities_collection as $instance){
+                        $documentData->getEntityRelationInstance($entity_key)->create([
+                            ($class_name::keyword_index) =>  $instance,
+                        ]);
+                    }
+                }
+            }
+            /*$addresses=$data['entities']['address'];
             foreach($addresses as $addr){
                 $documentData->addresses()->create(
                     [
@@ -70,7 +82,7 @@ class Document extends Model
                 $documentData->urls()->create([
                     'url'=>$url
                 ]);
-            }
+            }*/
         }
     }
     public function document_data(){

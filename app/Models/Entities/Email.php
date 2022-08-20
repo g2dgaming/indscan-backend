@@ -10,4 +10,7 @@ class Email extends Model
 {
     use HasFactory;
     use \App\Traits\isEntity;
+    protected $fillable=['email'];
+    const keyword_index='email';
+
 }

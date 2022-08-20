@@ -10,4 +10,6 @@ class Money extends Model
     use HasFactory;
     use \App\Traits\isEntity;
     protected $fillable=['amount'];
+    const keyword_index='amount';
+
 }

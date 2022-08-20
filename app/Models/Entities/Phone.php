@@ -10,4 +10,6 @@ class Phone extends Model
     use HasFactory;
     use \App\Traits\isEntity;
     protected $fillable=['phone_number'];
+    const keyword_index='phone_number';
+
 }

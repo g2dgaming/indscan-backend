@@ -10,5 +10,7 @@ class Address extends Model
     use HasFactory;
     use \App\Traits\isEntity;
     protected $fillable=['textAddress'];
+    const keyword_index='textAddress';
+
 
 }

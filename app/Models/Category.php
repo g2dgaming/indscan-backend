@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+    public function documents(){
+        return $this->hasMany(Document::class);
+    }
+    public function document_data()
+    {
+        return $this->hasManyThrough(DocumentData::class, Document::class);
+    }
 }

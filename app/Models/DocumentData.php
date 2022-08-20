@@ -11,8 +11,9 @@ use App\Models\Entities\Address;
 class DocumentData extends Model
 {
     use HasFactory;
-    protected $hidden=['englishText','hindiText','document_id','updated_at'];
-    protected $appends=['category'];
+    protected $hidden=['document_id','updated_at','thumbnail'];
+    protected $appends=['category','thumbnail_url'];
+    
     public function setEntitiesAttribute($array){
         //$this->attributes['entities']=json_encode($value);
         $this->attributes['entities']="";
@@ -21,6 +22,14 @@ class DocumentData extends Model
     public function getCreatedAtAttribute($value){
         $date = \Carbon\Carbon::parse($value);
         return $date->format('d/m/Y');
+    }
+    public function getThumbnailUrlAttribute(){
+        if($this->thumbnail){
+            return $this->thumbnail->url;
+        }
+        else{
+            return null;
+        }
     }
     public function getCategoryAttribute(){
         return $this->document->category->name;
@@ -42,32 +51,49 @@ class DocumentData extends Model
         $url= Storage::url('public/'.$fileName);
         $this->attributes['image']=$url;
     }
+    public function setThumbnailAttribute($value){
+        $img=Image::make($value)->encode('jpg');
+        $fileName=rand(1000,9000000).time().'.jpg';
+        $path=Storage::put('public/'.$fileName,$img->__toString());
+        $url= Storage::url('public/'.$fileName);       
+        $thumbnail=new Thumbnail;
+        $thumbnail->url=$url;
+        $thumbnail->save();
+        $this->attributes['thumbnail_id']=$thumbnail->id;
+
+    }
     public function getImageAttribute($value){
         return asset($value);
+    }
+    public function getEntityRelationInstance($classname){
+        return $this->$classname();
+    }
+    public function thumbnail(){
+        return $this->belongsTo(Thumbnail::class);
     }
     public function document()
     {
         return $this->belongsTo(Document::class);
     }
-    public function addresses(){
-        return $this->hasMany(Entities\Address::class,'document_data_id','id');
+    public function address(){
+        return $this->hasMany(Entities\Address::class);
     }
-    public function emails(){
+    public function email(){
         return $this->hasMany(Entities\Email::class);
     }
-    public function datetimes(){
+    public function date(){
         return $this->hasMany(Entities\DateTime::class);
     }
     public function money(){
         return $this->hasMany(Entities\Money::class);
     }
-    public function phone_numbers(){
+    public function phone(){
         return $this->hasMany(Entities\Phone::class);
     }
-    public function tracking_ids(){
+    public function tracking(){
         return $this->hasMany(Entities\Tracking::class);
     }
-    public function urls(){
+    public function url(){
         return $this->hasMany(Entities\Url::class);
     }
 }
