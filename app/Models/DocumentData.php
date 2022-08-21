@@ -52,8 +52,8 @@ class DocumentData extends Model
         $this->attributes['image']=$url;
     }
     public function setThumbnailAttribute($value){
-        $img=Image::make($value)->encode('png');
-        $fileName=rand(1000,9000000).time().'.png';
+        $img=Image::make($value)->encode('jpg');
+        $fileName=rand(1000,9000000).time().'.jpg';
         $path=Storage::put('public/'.$fileName,$img->__toString());
         $url= Storage::url('public/'.$fileName);       
         $thumbnail=new Thumbnail;
