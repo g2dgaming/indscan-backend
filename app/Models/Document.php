@@ -39,6 +39,22 @@ class Document extends Model
                     }
                 }
             }
+            Log::info('Near');
+            if(isset($data['is_pan_card'])){
+                if($data['is_pan_card']){
+                    $documentData->pan_card()->create([
+                        'pan_number'=>$data['pan_number']
+                    ]);
+                }
+                
+            }
+            if(isset($data['is_aadhar_card'])){
+                if($data['is_aadhar_card']){
+                    $documentData->aadhar_card()->create([
+                        'uid'=>$data['aadhar_number']
+                    ]);
+                }
+            }
             /*$addresses=$data['entities']['address'];
             foreach($addresses as $addr){
                 $documentData->addresses()->create(

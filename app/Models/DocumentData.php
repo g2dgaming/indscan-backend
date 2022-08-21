@@ -45,15 +45,15 @@ class DocumentData extends Model
         ];
     }
     public function setImageAttribute($value){
-        $resize=Image::make($value)->encode('jpg',80);
+        $resize=Image::make($value)->encode('jpg');
         $fileName=rand(1000,9000000).time().'.jpg';
         $path=Storage::put('public/'.$fileName,$resize->__toString());
         $url= Storage::url('public/'.$fileName);
         $this->attributes['image']=$url;
     }
     public function setThumbnailAttribute($value){
-        $img=Image::make($value)->encode('jpg');
-        $fileName=rand(1000,9000000).time().'.jpg';
+        $img=Image::make($value)->encode('png');
+        $fileName=rand(1000,9000000).time().'.png';
         $path=Storage::put('public/'.$fileName,$img->__toString());
         $url= Storage::url('public/'.$fileName);       
         $thumbnail=new Thumbnail;
@@ -96,5 +96,12 @@ class DocumentData extends Model
     public function url(){
         return $this->hasMany(Entities\Url::class);
     }
+    public function aadhar_card(){
+        return $this->hasOne(Entities\AadharCard::class);
+    }
+    public function pan_card(){
+        return $this->hasOne(Entities\PanCard::Class);
+    }
 }
+
 
