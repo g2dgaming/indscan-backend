@@ -16,8 +16,9 @@ use App\Models\Entities\PanCard;
 use App\Models\Document;
 use App\Models\DocumentData;
 use App\Models\Category;
+use App\Helpers\QueryBuilder;
 
-class SearchEntities implements ShouldQueue
+class SearchEntity implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -28,10 +29,12 @@ class SearchEntities implements ShouldQueue
      */
     protected $request;
     protected $queue_id;
-    public function __construct($request,$qi)
+    protected $entity;
+    public function __construct($request,$qi,$entity)
     {
         $this->request=$request;
         $this->queue_id=$qi;
+        $this->entity=$entity;
     }
 
     /**
@@ -43,20 +46,9 @@ class SearchEntities implements ShouldQueue
     {
         $keyword=$this->request['keyword'];
         $queue=SearchQueue::find($this->queue_id);
-        $score_entities=$this->request['score'];
-        foreach($score_entities as $key=>$value){
-            if($value == 1){
-                $classname=config('app.entities_query_builder.'.$key);
-                $ids=$classname::where($classname::keyword_index,'like','%'.$keyword.'%')->get()->pluck('document_data_id')->toArray();
-                $queue->document_datas()->sync($ids);
-            }
-        }
-        foreach($score_entities as $key=>$value){
-            if($value == 0){
-                $classname=config('app.entities_query_builder.'.$key);
-                $ids=$classname::where($classname::keyword_index,'like','%'.$keyword.'%')->get()->pluck('document_data_id')->toArray();
-                $queue->document_datas()->sync($ids);
-            }
-        }                             
+        $query=QueryBuilder::getQuery($this->request);
+        $classname=config('app.entities_query_builder.'.$this->entity);
+        $ids=$query->whereHas($this->entity,function ($q)use($keyword,$classname){$q->where($classname::keyword_index,'like','%'.$keyword.'%');})->get()->pluck('id');
+        $queue->document_datas()->sync($ids);                         
     }
 }

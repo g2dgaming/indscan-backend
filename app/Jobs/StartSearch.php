@@ -17,8 +17,11 @@ use App\Models\Entities\PanCard;
 use App\Models\Document;
 use App\Models\DocumentData;
 use App\Models\Category;
+use App\Helpers\QueryBuilder;
 use App\Jobs\StartSearch;
-use App\Jobs\SearchEntities;
+use App\Jobs\SearchEntity;
+use App\Jobs\FullTextSearch;
+
 
 use Log;
 class StartSearch implements ShouldQueue
@@ -59,16 +62,11 @@ class StartSearch implements ShouldQueue
             return;
         }
         else{
+            //Get Query From Query Builder
             $keyword=$request['keyword'];
-            if(isset($request['category'])){
-                $category=Category::where('name',$request['category'])->first();
-                $query=$category->document_data();
-            }
+            $query=QueryBuilder::getQuery($request);
             //After applying all filters and gettings ids;
             $ids=[];
-            if(!isset($query)){
-                $query=DocumentData::query();
-            }
             if(isset($request['entity'])){
                 $entity=$request['entity'];
                 if(isset((config('app.entities_query_builder'))[$entity])){
@@ -83,11 +81,26 @@ class StartSearch implements ShouldQueue
                 $query->whereHas('document',function($q)use ($keyword){
                     return $q->where('name','like','%'.$keyword.'%')->orWhere('notes','like','%'.$keyword.'%');
                 });
+                $ids=$query->get()->pluck('id');
+                //Adding Document name or notes matches to queue
+                $queue->document_datas()->sync($ids);
                 //Dispatching Score Jobs
-               if(isset($request['score'])){
-                    SearchEntities::dispatch($request,$queue_id);
+                if(isset($request['score'])){
+                    $score_entities=$this->request['score'];
+                    foreach($score_entities as $key=>$value){
+                        if($value == 1){
+                            SearchEntity::dispatch($request,$this->queue_id,$key);
+                        }
+                    }
+                    foreach($score_entities as $key=>$value){
+                        if($value == 0){
+                            SearchEntity::dispatch($request,$this->queue_id,$key);
+                        }
+                    }
                 }
-                //$query->orWhere('englishText','like','%'.$keyword.'%')->orWhere('hindiText','like','%'.$keyword.'%');
+                FullTextSearch::dispatch($request,$this->queue_id);
+                $queue->is_active=0;
+                $queue->save();
             }
         }
     }

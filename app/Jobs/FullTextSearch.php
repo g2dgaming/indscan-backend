@@ -16,6 +16,7 @@ use App\Models\Entities\PanCard;
 use App\Models\Document;
 use App\Models\DocumentData;
 use App\Models\Category;
+use App\Helpers\QueryBuilder;
 
 class FullTextSearch implements ShouldQueue
 {
@@ -40,6 +41,11 @@ class FullTextSearch implements ShouldQueue
      */
     public function handle()
     {
-        //
+        $query=QueryBuilder::getQuery($this->request);
+        $queue=SearchQueue::find($this->queue_id);
+        $keyword=$this->request['keyword'];
+        $query->where('englishText','like','%'.$keyword.'%')->orWhere('hindiText','like','%'.$keyword.'%');
+        $ids=$query->get()->pluck('id');
+        $queue->document_datas()->sync($ids);
     }
 }

@@ -30,7 +30,7 @@ class SearchController extends Controller
         ]);
     }
     public function index(Request $request){
-        $response = array('result' => '', 'success'=>false);
+        $response = array('result' => '');
         $validator = Validator::make($request->all(), [
             'id'=>'required|exists:search_queues'
         ]);
@@ -38,7 +38,9 @@ class SearchController extends Controller
         if ($validator->fails()) {
           $response['errors'] = $validator->messages();
         } else {
-            $data=SearchQueue::find($request['id'])->document_datas;
+            $queue=SearchQueue::find($request['id']);
+            $data=$queue->document_datas;
+            $response['is_active']=$queue->is_active;
             $response['result']=$data;
         }
         
