@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('dd_sq_pivot', function (Blueprint $table) {
             $table->foreignId('document_data_id')->constrained()->on('document_data');
             $table->foreignId('search_queue_id')->constrained();
+            $table->primary(['document_data_id','search_queue_id']);
         });
     }
 

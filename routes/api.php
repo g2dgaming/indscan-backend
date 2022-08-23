@@ -33,9 +33,11 @@ Route::group(['middleware'=>['auth:sanctum','corsfix'],'prefix'=>'documents' ],f
     Route::get('/',[DocumentController::class,'getAll']);
     Route::get('/{id}',[DocumentController::class,'getDocument']);
  });
- Route::group(['middleware'=>'auth:sanctum','prefix'=>'category' ],function(){
+ Route::group(['prefix'=>'category' ],function(){
     Route::get('/',[CategoryController::class,'index'])->name('category');        
  });
  Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::get('/search',[SearchController::class,'index']);        
+    Route::post('/search',[SearchController::class,'create']);        
+
  });
