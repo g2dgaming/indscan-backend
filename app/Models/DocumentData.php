@@ -13,7 +13,6 @@ class DocumentData extends Model
     use HasFactory;
     protected $hidden=['document_id','updated_at','thumbnail'];
     protected $appends=['category','thumbnail_url'];
-    
     public function setEntitiesAttribute($array){
         //$this->attributes['entities']=json_encode($value);
         $this->attributes['entities']="";

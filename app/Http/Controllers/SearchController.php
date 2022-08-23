@@ -73,6 +73,7 @@ class SearchController extends Controller
                 });
                 if(isset($request['score'])){
                     $score_entities=$request['score'];
+                    /*
                     $query->orWhere(function($queryContainer)use ($keyword,$score_entities){
                         $count=0;
                         foreach($score_entities as $key=>$value){
@@ -92,10 +93,19 @@ class SearchController extends Controller
                             }
                             $count++;
                         }  
-                    });                
+                    });
+                    */
+                    foreach($score_entities as $key=>$value){
+                        if($value == 1){
+                            $classname=config('app.entities_query_builder.'.$key);
+                            $idss=$classname::where($classname::keyword_index,'like','%'.$keyword.'%')->get()->pluck('document_data_id')->toArray();
+                            $ids=array_merge($ids,$idss);                            
+                        }
+                    }                           
+                    $query->orWhereIn('id',$ids);
                 }
                 $query->orWhere('englishText','like','%'.$keyword.'%')->orWhere('hindiText','like','%'.$keyword.'%');
-                $result=$query->limit($max_page_count)->get();
+                $result=$query->limit(10)->get();
 
             }
         }

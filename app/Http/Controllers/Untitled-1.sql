@@ -1,0 +1,3 @@
+
+use sih_production;LOAD DATA LOCAL INFILE '/root/url_dump.csv' INTO TABLE urls FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 LINES;
+

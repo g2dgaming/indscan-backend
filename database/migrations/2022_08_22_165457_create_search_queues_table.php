@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('aadhar_cards', function (Blueprint $table) {
+        Schema::create('search_queues', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->string('uid');
-            $table->unsignedBigInteger('document_data_id');
-            $table->foreign('document_data_id')->references('id')->on('document_data');
-            $table->string('address')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('aadhar_cards');
+        Schema::dropIfExists('search_queues');
     }
 };

@@ -39,7 +39,6 @@ class Document extends Model
                     }
                 }
             }
-            Log::info('Near');
             if(isset($data['is_pan_card'])){
                 if($data['is_pan_card']){
                     $documentData->pan_card()->create([

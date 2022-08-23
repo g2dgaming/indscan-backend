@@ -49,7 +49,7 @@ class DocumentController extends Controller
         return response()->json($document);
     }
     public function getAll(){
-        return Auth::user()->documents;
+        return response()->json(['result'=>Auth::user()->documents()->paginate(100)]);
     }
     public function getDocument($id){
         return Auth::user()->documents()->where('id',$id)->get();
