@@ -19,7 +19,6 @@ class DocumentController extends Controller
         */
         $input=$request->all();
         $category=$input['doc_category'];
-        $category_id=1;
         if(!Category::where('name',$category)->exists()){
             $cat=new Category;
             $cat->name=$category;
