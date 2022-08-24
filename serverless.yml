@@ -1,0 +1,55 @@
+service: app
+
+provider:
+    name: aws
+    region: ap-south-1
+    runtime: provided.al2
+    environment:
+        # This environment variable will contain the table name
+        DYNAMODB_CACHE_TABLE: !Ref CacheTable
+        QUEUE_CONNECTION: sqs
+        SQS_QUEUE: ${construct:jobs.queueUrl}
+
+resources:
+    Resources:
+        CacheTable:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                AttributeDefinitions: # only keys are defined here, other attributes are dynamic
+                    -   AttributeName: id # adds a mandatory id field
+                        AttributeType: S # the type of id is a string
+                BillingMode: PAY_PER_REQUEST # billed for each request instead of paying for a constant capacity
+                TimeToLiveSpecification: # deletes cache keys automatically based on a ttl field which contains a timestamp
+                    AttributeName: ttl
+                    Enabled: true
+                KeySchema:
+                    -   AttributeName: id
+                        KeyType: HASH # the type of key, HASH means partition key (similar to primary keys in SQL)
+
+
+plugins:
+  - ./vendor/bref/bref
+  - serverless-lift
+functions:
+    api:
+        handler: public/index.php
+        description: ''
+        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+        layers:
+            - ${bref:layer.php-81-fpm}
+        events:
+            -   httpApi: '*'
+
+constructs:
+    jobs:
+        type: queue
+        worker:
+            handler: worker.php
+            layers:
+                - ${bref:layer.php-81}
+# Exclude files from deployment
+package:
+    patterns:
+        - '!node_modules/**'
+        - '!tests/**'
+        - '!storage/**'
