@@ -55,6 +55,6 @@ class SearchEntity implements ShouldQueue
             $limit=(int)config('app.default_max_search_limit');
         }
         $ids=$query->whereHas($this->entity,function ($q)use($keyword,$classname){$q->where($classname::keyword_index,'like','%'.$keyword.'%');})->limit($limit)->get()->pluck('id');
-        $queue->document_datas()->sync($ids);                         
+        $queue->document_datas()->attach($ids);                         
     }
 }

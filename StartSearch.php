@@ -52,7 +52,7 @@ class StartSearch implements ShouldQueue
     {
         $request=$this->request;
         $queue=SearchQueue::find($this->queue_id);
-        //ClearQueue::dispatch($this->queue_id)->delay(config('app.queue_clear_time'));
+        ClearQueue::dispatch($this->queue_id)->delay(config('app.queue_clear_time'));
         if(isset($request['max_search_limit'])){
             $limit=(int)$request['max_search_limit'];
         }
@@ -107,7 +107,7 @@ class StartSearch implements ShouldQueue
                         }
                     }
                 }
-                // FullTextSearch::dispatch($request,$this->queue_id);
+                FullTextSearch::dispatch($request,$this->queue_id);
                 $queue->is_active=0;
                 $queue->save();
             }

@@ -16,7 +16,6 @@ class DocumentData extends Model
     public function setEntitiesAttribute($array){
         //$this->attributes['entities']=json_encode($value);
         $this->attributes['entities']="";
-        
     }
     public function getCreatedAtAttribute($value){
         $date = \Carbon\Carbon::parse($value);

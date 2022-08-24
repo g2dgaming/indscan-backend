@@ -52,6 +52,6 @@ class FullTextSearch implements ShouldQueue
         $keyword=$this->request['keyword'];
         $query->where('englishText','like','%'.$keyword.'%')->orWhere('hindiText','like','%'.$keyword.'%');
         $ids=$query->limit($limit)->get()->pluck('id');
-        $queue->document_datas()->sync($ids);
+        $queue->document_datas()->attach($ids);
     }
 }

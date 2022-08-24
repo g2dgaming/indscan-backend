@@ -39,9 +39,9 @@ class SearchController extends Controller
           $response['errors'] = $validator->messages();
         } else {
             $queue=SearchQueue::find($request['id']);
-            $data=$queue->document_datas;
+            $data=$queue->document_datas()->get();
             $response['is_active']=$queue->is_active;
-            $response['result']=$data;
+            $response['result']=($data);
         }
         
         return response()->json($response);
