@@ -48,7 +48,13 @@ class SearchEntity implements ShouldQueue
         $queue=SearchQueue::find($this->queue_id);
         $query=QueryBuilder::getQuery($this->request);
         $classname=config('app.entities_query_builder.'.$this->entity);
-        $ids=$query->whereHas($this->entity,function ($q)use($keyword,$classname){$q->where($classname::keyword_index,'like','%'.$keyword.'%');})->get()->pluck('id');
+        if(isset($this->request['max_search_limit'])){
+            $limit=(int)$this->request['max_search_limit'];
+        }
+        else{
+            $limit=(int)config('app.default_max_search_limit');
+        }
+        $ids=$query->whereHas($this->entity,function ($q)use($keyword,$classname){$q->where($classname::keyword_index,'like','%'.$keyword.'%');})->limit($limit)->get()->pluck('id');
         $queue->document_datas()->sync($ids);                         
     }
 }

@@ -43,9 +43,15 @@ class FullTextSearch implements ShouldQueue
     {
         $query=QueryBuilder::getQuery($this->request);
         $queue=SearchQueue::find($this->queue_id);
+        if(isset($this->request['max_search_limit'])){
+            $limit=(int)$this->request['max_search_limit'];
+        }
+        else{
+            $limit=(int)config('app.default_max_search_limit');
+        }
         $keyword=$this->request['keyword'];
         $query->where('englishText','like','%'.$keyword.'%')->orWhere('hindiText','like','%'.$keyword.'%');
-        $ids=$query->get()->pluck('id');
+        $ids=$query->limit($limit)->get()->pluck('id');
         $queue->document_datas()->sync($ids);
     }
 }

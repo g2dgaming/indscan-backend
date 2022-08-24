@@ -21,6 +21,8 @@ use App\Helpers\QueryBuilder;
 use App\Jobs\StartSearch;
 use App\Jobs\SearchEntity;
 use App\Jobs\FullTextSearch;
+use App\Jobs\ClearQueue;
+
 
 
 use Log;
@@ -50,14 +52,21 @@ class StartSearch implements ShouldQueue
     {
         $request=$this->request;
         $queue=SearchQueue::find($this->queue_id);
+        ClearQueue::dispatch($this->queue_id)->delay(config('app.queue_clear_time'));
+        if(isset($request['max_search_limit'])){
+            $limit=(int)$request['max_search_limit'];
+        }
+        else{
+            $limit=(int)config('app.default_max_search_limit');
+        }
         if(isset($request['aadhar_number'])){
-            $ids=AadharCard::where('uid','like','%'.$request['aadhar_number'].'%')->get()->pluck('document_data_id');
+            $ids=AadharCard::where('uid','like','%'.$request['aadhar_number'].'%')->limit($limit)->get()->pluck('document_data_id');
             $queue->document_datas()->sync($ids);
             return;
 
         }
         else if(isset($request['pan_number'])){
-            $ids=PanCard::where('pan_number','like','%'.$request['pan_number'].'%')->get()->pluck('document_data_id');
+            $ids=PanCard::where('pan_number','like','%'.$request['pan_number'].'%')->limit($limit)->get()->pluck('document_data_id');
             $queue->document_datas()->sync($ids);
             return;
         }
@@ -71,7 +80,7 @@ class StartSearch implements ShouldQueue
                 $entity=$request['entity'];
                 if(isset((config('app.entities_query_builder'))[$entity])){
                     $classname=config('app.entities_query_builder.'.$entity);
-                    $ids=$query->whereHas($entity,function ($q)use($keyword,$classname){$q->where($classname::keyword_index,'like','%'.$keyword.'%');})->get()->pluck('id');
+                    $ids=$query->whereHas($entity,function ($q)use($keyword,$classname){$q->where($classname::keyword_index,'like','%'.$keyword.'%');})->limit($limit)->get()->pluck('id');
                     $queue->document_datas()->sync($ids);
                     return;
                 }
@@ -81,7 +90,7 @@ class StartSearch implements ShouldQueue
                 $query->whereHas('document',function($q)use ($keyword){
                     return $q->where('name','like','%'.$keyword.'%')->orWhere('notes','like','%'.$keyword.'%');
                 });
-                $ids=$query->get()->pluck('id');
+                $ids=$query->limit($limit)->get()->pluck('id');
                 //Adding Document name or notes matches to queue
                 $queue->document_datas()->sync($ids);
                 //Dispatching Score Jobs

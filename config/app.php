@@ -123,6 +123,9 @@ return [
 
     'key' => env('APP_KEY'),
 
+    'queue_clear_time'=>env('QUEUE_CLEAR_TIME',5),
+    'default_max_search_limit'=>env('DEFAULT_MAX_SEARCH_LIMIT',100),
+
     'cipher' => 'AES-256-CBC',
 
     /*
