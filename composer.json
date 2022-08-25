@@ -9,6 +9,7 @@
         "barryvdh/laravel-cors": "^3.0",
         "bref/bref": "^1.7",
         "bref/laravel-bridge": "^1.2",
+        "doctrine/dbal": "^3.4",
         "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
