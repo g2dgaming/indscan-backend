@@ -7,10 +7,11 @@ use \App\Models\UploadSession;
 use Auth;
 use \App\Models\User;
 use DB;
+use Log;
 class UploadSessionController extends Controller
 {
     public function index(Request $request){
-        $user_id=User::find(1)->id;
+        $user_id=Auth::user()->id;
         $id=md5(uniqid(rand(), true));
         $session=new UploadSession;
         $session->id=$id;
@@ -23,7 +24,7 @@ class UploadSessionController extends Controller
     }
     public function unlink(Request $request){
         $success=false;
-        $query=DB::table('links')->where('upload_session_id',$request['session_id'])->where('pairing_code_id',$request['pairing_code']);
+        $query=DB::table('links')->where('upload_session_id',$request['session_id']);
         if($query->exists()){
             $success=$query->delete();
         }

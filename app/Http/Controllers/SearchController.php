@@ -24,7 +24,6 @@ class SearchController extends Controller
             'user_id'=>Auth::user()->id
         ]);
         $i=time();
-        Log::info($request->all());
         StartSearch::dispatch($request->all(),$queue->id);
         $f=time();
         return response()->json([

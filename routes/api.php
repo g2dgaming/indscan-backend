@@ -38,12 +38,12 @@ Route::group(['middleware'=>['auth:sanctum','corsfix'],'prefix'=>'documents' ],f
  Route::group(['prefix'=>'category' ],function(){
     Route::get('/',[CategoryController::class,'index'])->name('category');        
  });
- Route::group(['prefix'=>'sessions' ],function(){
+ Route::group(['middleware'=>['auth:sanctum'],'prefix'=>'sessions' ],function(){
    Route::post('/',[UploadSessionController::class,'index'])->name('session-create');  
    Route::post('/unlink',[UploadSessionController::class,'unlink'])->name('unlink_session');  
 
 });
-Route::group(['prefix'=>'pairing_codes' ],function(){
+Route::group(['middleware'=>['auth:sanctum'],'prefix'=>'pairing_codes' ],function(){
    Route::post('/',[PairingCodeController::class,'index'])->name('pairing_code_create');  
    Route::post('/link',[PairingCodeController::class,'link'])->name('link_pairing_code');  
    Route::get('/isLinked',[PairingCodeController::class,'isLinked'])->name('check_linked');  
