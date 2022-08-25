@@ -142,6 +142,20 @@
                 },
                 {
                   "Effect": "Allow",
+                  "Action": [
+                    "s3:*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "${indscan.Arn}"
+                    },
+                    {
+                      "Fn::Sub": "${indscan.Arn}/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
                   "Action": "sqs:SendMessage",
                   "Resource": [
                     {
@@ -195,7 +209,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/app/dev/1661369067469-2022-08-24T19:24:27.469Z/app.zip"
+          "S3Key": "serverless/app/dev/1661399211151-2022-08-25T03:46:51.151Z/app.zip"
         },
         "Handler": "public/index.php",
         "Runtime": "provided.al2",
@@ -210,6 +224,9 @@
             "QUEUE_CONNECTION": "sqs",
             "SQS_QUEUE": {
               "Ref": "jobsQueueCEDBAE3E"
+            },
+            "AWS_BUCKET": {
+              "Ref": "indscan"
             }
           }
         },
@@ -234,13 +251,13 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/app/dev/1661369067469-2022-08-24T19:24:27.469Z/app.zip"
+          "S3Key": "serverless/app/dev/1661399211151-2022-08-25T03:46:51.151Z/app.zip"
         },
         "Handler": "worker.php",
         "Runtime": "provided.al2",
         "FunctionName": "app-dev-jobsWorker",
         "MemorySize": 1024,
-        "Timeout": 6,
+        "Timeout": 28,
         "Environment": {
           "Variables": {
             "DYNAMODB_CACHE_TABLE": {
@@ -249,6 +266,9 @@
             "QUEUE_CONNECTION": "sqs",
             "SQS_QUEUE": {
               "Ref": "jobsQueueCEDBAE3E"
+            },
+            "AWS_BUCKET": {
+              "Ref": "indscan"
             }
           }
         },
@@ -266,24 +286,24 @@
         "JobsWorkerLogGroup"
       ]
     },
-    "ApiLambdaVersiontxNvOsC4hByuqzTHaD8gYGJb0hNjZ71P2TxdhgSxDaU": {
+    "ApiLambdaVersiona2hsBoHMUp2vDb3OS1HOfVOEA6M7Itrta1pABXPhMk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "OtUgKKfnAxjkdt5eqlFjRJ6igypEblxglRZB6c6boJQ="
+        "CodeSha256": "a4jaj6LuMoigWc6hVJ7Hc9WBlzB6su8OM6r6pa9nyQ0="
       }
     },
-    "JobsWorkerLambdaVersion1t2RWo1M0TfHjzIKo8VFk6pscs3q8U3SqPaX9eWKc": {
+    "JobsWorkerLambdaVersion8RMQRCCLVAo5Jxk2LpWNKZ51TbClQ4xcMiNMwbjKo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "JobsWorkerLambdaFunction"
         },
-        "CodeSha256": "OtUgKKfnAxjkdt5eqlFjRJ6igypEblxglRZB6c6boJQ="
+        "CodeSha256": "a4jaj6LuMoigWc6hVJ7Hc9WBlzB6su8OM6r6pa9nyQ0="
       }
     },
     "JobsWorkerEventSourceMappingSQSJobsQueueCEDBAE3E": {
@@ -406,6 +426,9 @@
       },
       "DependsOn": "HttpApiIntegrationApi"
     },
+    "indscan": {
+      "Type": "AWS::S3::Bucket"
+    },
     "CacheTable": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
@@ -450,7 +473,7 @@
           },
           "maxReceiveCount": 3
         },
-        "VisibilityTimeout": 36
+        "VisibilityTimeout": 168
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete"
@@ -468,7 +491,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersiontxNvOsC4hByuqzTHaD8gYGJb0hNjZ71P2TxdhgSxDaU"
+        "Ref": "ApiLambdaVersiona2hsBoHMUp2vDb3OS1HOfVOEA6M7Itrta1pABXPhMk"
       },
       "Export": {
         "Name": "sls-app-dev-ApiLambdaFunctionQualifiedArn"
@@ -477,7 +500,7 @@
     "JobsWorkerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "JobsWorkerLambdaVersion1t2RWo1M0TfHjzIKo8VFk6pscs3q8U3SqPaX9eWKc"
+        "Ref": "JobsWorkerLambdaVersion8RMQRCCLVAo5Jxk2LpWNKZ51TbClQ4xcMiNMwbjKo"
       },
       "Export": {
         "Name": "sls-app-dev-JobsWorkerLambdaFunctionQualifiedArn"

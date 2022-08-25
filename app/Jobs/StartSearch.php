@@ -22,9 +22,7 @@ use App\Jobs\StartSearch;
 use App\Jobs\SearchEntity;
 use App\Jobs\FullTextSearch;
 use App\Jobs\ClearQueue;
-
-
-
+use DB;
 use Log;
 class StartSearch implements ShouldQueue
 {
@@ -62,12 +60,15 @@ class StartSearch implements ShouldQueue
         if(isset($request['aadhar_number'])){
             $ids=AadharCard::where('uid','like','%'.$request['aadhar_number'].'%')->limit($limit)->get()->pluck('document_data_id');
             $queue->document_datas()->attach($ids);
+            $queue->is_active=0;
+            $queue->save();
             return;
-
         }
         else if(isset($request['pan_number'])){
             $ids=PanCard::where('pan_number','like','%'.$request['pan_number'].'%')->limit($limit)->get()->pluck('document_data_id');
             $queue->document_datas()->attach($ids);
+            $queue->is_active=0;
+            $queue->save();
             return;
         }
         else{
@@ -82,7 +83,8 @@ class StartSearch implements ShouldQueue
                     $classname=config('app.entities_query_builder.'.$entity);
                     $ids=$query->whereHas($entity,function ($q)use($keyword,$classname){$q->where($classname::keyword_index,'like','%'.$keyword.'%');})->limit($limit)->get()->pluck('id');
                     $queue->document_datas()->attach($ids);
-                    return;
+                    $queue->is_active=0;
+                    $queue->save();
                 }
             } 
             else{
@@ -98,18 +100,31 @@ class StartSearch implements ShouldQueue
                     $score_entities=$this->request['score'];
                     foreach($score_entities as $key=>$value){
                         if($value == 1){
+                            DB::table('search_queue_activity')->insert([
+                                'search_queue_id'=>$queue->id,
+                                'operation'=>$key,
+                                'is_active'=>1
+                            ]);
                             SearchEntity::dispatch($request,$this->queue_id,$key);
                         }
                     }
                     foreach($score_entities as $key=>$value){
                         if($value == 0){
+                            DB::table('search_queue_activity')->insert([
+                                'search_queue_id'=>$queue->id,
+                                'operation'=>$key,
+                                'is_active'=>1
+                            ]);
                             SearchEntity::dispatch($request,$this->queue_id,$key);
                         }
                     }
                 }
-                // FullTextSearch::dispatch($request,$this->queue_id);
-                $queue->is_active=0;
-                $queue->save();
+                DB::table('search_queue_activity')->insert([
+                    'search_queue_id'=>$queue->id,
+                    'operation'=>'fullText',
+                    'is_active'=>1
+                ]);
+                FullTextSearch::dispatch($request,$this->queue_id);
             }
         }
     }

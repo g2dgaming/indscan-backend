@@ -23,15 +23,22 @@ class SearchController extends Controller
         $queue=SearchQueue::create([
             'user_id'=>Auth::user()->id
         ]);
+        $i=time();
+        Log::info($request->all());
         StartSearch::dispatch($request->all(),$queue->id);
+        $f=time();
         return response()->json([
             'status'=>true,
-            'id'=>$queue->id
+            'id'=>$queue->id,
+            'time'=>$f-$i,
+            'request'=>$request->all()
         ]);
     }
-    public function index(Request $request){
+    public function index($id,Request $req){
         $response = array('result' => '');
-        $validator = Validator::make($request->all(), [
+        $request=['id'=>$id];
+        $perpage=10;
+        $validator = Validator::make($request, [
             'id'=>'required|exists:search_queues'
         ]);
         
@@ -39,7 +46,7 @@ class SearchController extends Controller
           $response['errors'] = $validator->messages();
         } else {
             $queue=SearchQueue::find($request['id']);
-            $data=$queue->document_datas()->get();
+            $data=$queue->document_datas()->paginate($perpage);
             $response['is_active']=$queue->is_active;
             $response['result']=($data);
         }

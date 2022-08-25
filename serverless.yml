@@ -9,9 +9,21 @@ provider:
         DYNAMODB_CACHE_TABLE: !Ref CacheTable
         QUEUE_CONNECTION: sqs
         SQS_QUEUE: ${construct:jobs.queueUrl}
+        AWS_BUCKET: !Ref indscan
+    iam:
+        role:
+            statements:
+                # Allow Lambda to read and write files in the S3 buckets
+                -   Effect: Allow
+                    Action: s3:*
+                    Resource:
+                        - !Sub '${indscan.Arn}' # the storage bucket
+                        - !Sub '${indscan.Arn}/*' # and everything inside    
 
 resources:
     Resources:
+        indscan:
+            Type: AWS::S3::Bucket
         CacheTable:
             Type: AWS::DynamoDB::Table
             Properties:
@@ -45,6 +57,7 @@ constructs:
         type: queue
         worker:
             handler: worker.php
+            timeout: 28
             layers:
                 - ${bref:layer.php-81}
 # Exclude files from deployment

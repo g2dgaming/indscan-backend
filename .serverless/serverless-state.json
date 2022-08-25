@@ -15,24 +15,45 @@
         "QUEUE_CONNECTION": "sqs",
         "SQS_QUEUE": {
           "Ref": "jobsQueueCEDBAE3E"
+        },
+        "AWS_BUCKET": {
+          "Ref": "indscan"
         }
       },
-      "stage": "dev",
-      "versionFunctions": true,
-      "iamRoleStatements": [
-        {
-          "Effect": "Allow",
-          "Action": "sqs:SendMessage",
-          "Resource": [
+      "iam": {
+        "role": {
+          "statements": [
             {
-              "Fn::GetAtt": [
-                "jobsQueueCEDBAE3E",
-                "Arn"
+              "Effect": "Allow",
+              "Action": [
+                "s3:*"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": "${indscan.Arn}"
+                },
+                {
+                  "Fn::Sub": "${indscan.Arn}/*"
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": "sqs:SendMessage",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "jobsQueueCEDBAE3E",
+                    "Arn"
+                  ]
+                }
               ]
             }
           ]
         }
-      ],
+      },
+      "stage": "dev",
+      "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
@@ -176,7 +197,10 @@
                         ]
                       },
                       {
-                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][0]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][1]"
                       },
                       {
                         "Effect": "Allow",
@@ -221,7 +245,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/app/dev/1661369067469-2022-08-24T19:24:27.469Z/app.zip"
+                "S3Key": "serverless/app/dev/1661399211151-2022-08-25T03:46:51.151Z/app.zip"
               },
               "Handler": "public/index.php",
               "Runtime": "provided.al2",
@@ -236,6 +260,9 @@
                   "QUEUE_CONNECTION": "sqs",
                   "SQS_QUEUE": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"SQS_QUEUE\"]"
+                  },
+                  "AWS_BUCKET": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"AWS_BUCKET\"]"
                   }
                 }
               },
@@ -260,13 +287,13 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/app/dev/1661369067469-2022-08-24T19:24:27.469Z/app.zip"
+                "S3Key": "serverless/app/dev/1661399211151-2022-08-25T03:46:51.151Z/app.zip"
               },
               "Handler": "worker.php",
               "Runtime": "provided.al2",
               "FunctionName": "app-dev-jobsWorker",
               "MemorySize": 1024,
-              "Timeout": 6,
+              "Timeout": 28,
               "Environment": {
                 "Variables": {
                   "DYNAMODB_CACHE_TABLE": {
@@ -275,6 +302,9 @@
                   "QUEUE_CONNECTION": "sqs",
                   "SQS_QUEUE": {
                     "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"SQS_QUEUE\"]"
+                  },
+                  "AWS_BUCKET": {
+                    "$ref": "$[\"service\"][\"provider\"][\"environment\"][\"AWS_BUCKET\"]"
                   }
                 }
               },
@@ -292,24 +322,24 @@
               "JobsWorkerLogGroup"
             ]
           },
-          "ApiLambdaVersiontxNvOsC4hByuqzTHaD8gYGJb0hNjZ71P2TxdhgSxDaU": {
+          "ApiLambdaVersiona2hsBoHMUp2vDb3OS1HOfVOEA6M7Itrta1pABXPhMk": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "OtUgKKfnAxjkdt5eqlFjRJ6igypEblxglRZB6c6boJQ="
+              "CodeSha256": "a4jaj6LuMoigWc6hVJ7Hc9WBlzB6su8OM6r6pa9nyQ0="
             }
           },
-          "JobsWorkerLambdaVersion1t2RWo1M0TfHjzIKo8VFk6pscs3q8U3SqPaX9eWKc": {
+          "JobsWorkerLambdaVersion8RMQRCCLVAo5Jxk2LpWNKZ51TbClQ4xcMiNMwbjKo": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "JobsWorkerLambdaFunction"
               },
-              "CodeSha256": "OtUgKKfnAxjkdt5eqlFjRJ6igypEblxglRZB6c6boJQ="
+              "CodeSha256": "a4jaj6LuMoigWc6hVJ7Hc9WBlzB6su8OM6r6pa9nyQ0="
             }
           },
           "JobsWorkerEventSourceMappingSQSJobsQueueCEDBAE3E": {
@@ -429,6 +459,9 @@
             },
             "DependsOn": "HttpApiIntegrationApi"
           },
+          "indscan": {
+            "Type": "AWS::S3::Bucket"
+          },
           "CacheTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
@@ -473,7 +506,7 @@
                 },
                 "maxReceiveCount": 3
               },
-              "VisibilityTimeout": 36
+              "VisibilityTimeout": 168
             },
             "UpdateReplacePolicy": "Delete",
             "DeletionPolicy": "Delete"
@@ -491,7 +524,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersiontxNvOsC4hByuqzTHaD8gYGJb0hNjZ71P2TxdhgSxDaU"
+              "Ref": "ApiLambdaVersiona2hsBoHMUp2vDb3OS1HOfVOEA6M7Itrta1pABXPhMk"
             },
             "Export": {
               "Name": "sls-app-dev-ApiLambdaFunctionQualifiedArn"
@@ -500,7 +533,7 @@
           "JobsWorkerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "JobsWorkerLambdaVersion1t2RWo1M0TfHjzIKo8VFk6pscs3q8U3SqPaX9eWKc"
+              "Ref": "JobsWorkerLambdaVersion8RMQRCCLVAo5Jxk2LpWNKZ51TbClQ4xcMiNMwbjKo"
             },
             "Export": {
               "Name": "sls-app-dev-JobsWorkerLambdaFunctionQualifiedArn"
@@ -674,10 +707,11 @@
         "memory": 1024,
         "runtime": "provided.al2",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersiontxNvOsC4hByuqzTHaD8gYGJb0hNjZ71P2TxdhgSxDaU"
+        "versionLogicalId": "ApiLambdaVersiona2hsBoHMUp2vDb3OS1HOfVOEA6M7Itrta1pABXPhMk"
       },
       "jobsWorker": {
         "handler": "worker.php",
+        "timeout": 28,
         "layers": {
           "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"JobsWorkerLambdaFunction\"][\"Properties\"][\"Layers\"]"
         },
@@ -685,7 +719,7 @@
           {
             "sqs": {
               "arn": {
-                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"IamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][3][\"Resource\"][0]"
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"IamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][4][\"Resource\"][0]"
               },
               "batchSize": 1,
               "maximumBatchingWindow": 0,
@@ -696,14 +730,16 @@
         "name": "app-dev-jobsWorker",
         "package": {},
         "memory": 1024,
-        "timeout": 6,
         "runtime": "provided.al2",
         "vpc": {},
-        "versionLogicalId": "JobsWorkerLambdaVersion1t2RWo1M0TfHjzIKo8VFk6pscs3q8U3SqPaX9eWKc"
+        "versionLogicalId": "JobsWorkerLambdaVersion8RMQRCCLVAo5Jxk2LpWNKZ51TbClQ4xcMiNMwbjKo"
       }
     },
     "resources": {
       "Resources": {
+        "indscan": {
+          "Type": "AWS::S3::Bucket"
+        },
         "CacheTable": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
@@ -748,7 +784,7 @@
               },
               "maxReceiveCount": 3
             },
-            "VisibilityTimeout": 36
+            "VisibilityTimeout": 168
           },
           "UpdateReplacePolicy": "Delete",
           "DeletionPolicy": "Delete"
@@ -791,22 +827,46 @@
             "Ref": "CacheTable"
           },
           "QUEUE_CONNECTION": "sqs",
-          "SQS_QUEUE": "${Token[TOKEN.224]}"
+          "SQS_QUEUE": "${Token[TOKEN.227]}",
+          "AWS_BUCKET": {
+            "Ref": "indscan"
+          }
         },
-        "stage": "dev",
-        "versionFunctions": true,
-        "iamRoleStatements": [
-          {
-            "Effect": "Allow",
-            "Action": "sqs:SendMessage",
-            "Resource": [
-              "${Token[TOKEN.236]}"
+        "iam": {
+          "role": {
+            "statements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:*"
+                ],
+                "Resource": [
+                  {
+                    "Fn::Sub": "${indscan.Arn}"
+                  },
+                  {
+                    "Fn::Sub": "${indscan.Arn}/*"
+                  }
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Action": "sqs:SendMessage",
+                "Resource": [
+                  "${Token[TOKEN.239]}"
+                ]
+              }
             ]
           }
-        ]
+        },
+        "stage": "dev",
+        "versionFunctions": true
       },
       "resources": {
         "Resources": {
+          "indscan": {
+            "Type": "AWS::S3::Bucket"
+          },
           "CacheTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
@@ -851,13 +911,14 @@
         },
         "jobsWorker": {
           "handler": "worker.php",
+          "timeout": 28,
           "layers": [
             "arn:aws:lambda:ap-south-1:209497400698:layer:php-81:27"
           ],
           "events": [
             {
               "sqs": {
-                "arn": "${Token[TOKEN.236]}",
+                "arn": "${Token[TOKEN.239]}",
                 "batchSize": 1,
                 "maximumBatchingWindow": 0,
                 "functionResponseType": "ReportBatchItemFailures"
@@ -872,13 +933,14 @@
           "type": "queue",
           "worker": {
             "handler": "worker.php",
+            "timeout": 28,
             "layers": [
               "arn:aws:lambda:ap-south-1:209497400698:layer:php-81:27"
             ],
             "events": [
               {
                 "sqs": {
-                  "arn": "${Token[TOKEN.236]}",
+                  "arn": "${Token[TOKEN.239]}",
                   "batchSize": 1,
                   "maximumBatchingWindow": 0,
                   "functionResponseType": "ReportBatchItemFailures"
@@ -902,7 +964,7 @@
     "artifact": "/Users/g2dgaming/BackendProjects/indscan-backend/.serverless/app.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/app/dev/1661369067469-2022-08-24T19:24:27.469Z",
+    "artifactDirectoryName": "serverless/app/dev/1661399211151-2022-08-25T03:46:51.151Z",
     "artifact": "app.zip"
   }
 }

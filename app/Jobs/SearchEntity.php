@@ -17,7 +17,7 @@ use App\Models\Document;
 use App\Models\DocumentData;
 use App\Models\Category;
 use App\Helpers\QueryBuilder;
-
+use DB;
 class SearchEntity implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -55,6 +55,12 @@ class SearchEntity implements ShouldQueue
             $limit=(int)config('app.default_max_search_limit');
         }
         $ids=$query->whereHas($this->entity,function ($q)use($keyword,$classname){$q->where($classname::keyword_index,'like','%'.$keyword.'%');})->limit($limit)->get()->pluck('id');
-        $queue->document_datas()->attach($ids);                         
+        try {
+            $queue->document_datas()->attach($ids);         
+        } catch(\Illuminate\Database\QueryException $e){
+        }          
+        DB::table('search_queue_activity')->where('search_queue_id',$queue->id)->where('operation',$this->entity)->update([
+            'is_active'=>0
+        ]);   
     }
 }

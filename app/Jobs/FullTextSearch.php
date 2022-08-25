@@ -17,7 +17,7 @@ use App\Models\Document;
 use App\Models\DocumentData;
 use App\Models\Category;
 use App\Helpers\QueryBuilder;
-
+use DB;
 class FullTextSearch implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -52,6 +52,16 @@ class FullTextSearch implements ShouldQueue
         $keyword=$this->request['keyword'];
         $query->where('englishText','like','%'.$keyword.'%')->orWhere('hindiText','like','%'.$keyword.'%');
         $ids=$query->limit($limit)->get()->pluck('id');
-        $queue->document_datas()->attach($ids);
+        try {
+            $queue->document_datas()->attach($ids);
+            DB::table('search_queue_activity')->where('search_queue_id',$queue->id)->where('operation','fullText')->update([
+                'is_active'=>0
+            ]);
+        } catch(\Illuminate\Database\QueryException $e){
+            DB::table('search_queue_activity')->where('search_queue_id',$queue->id)->where('operation','fullText')->update([
+                'is_active'=>0
+            ]);
+        }
+       
     }
 }

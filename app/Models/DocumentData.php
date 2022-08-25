@@ -42,18 +42,20 @@ class DocumentData extends Model
             'urls'=>$this->urls
         ];
     }
-    public function setImageAttribute($value){
-        $resize=Image::make($value)->encode('jpg');
-        $fileName=rand(1000,9000000).time().'.jpg';
-        $path=Storage::put('public/'.$fileName,$resize->__toString());
-        $url= Storage::url('public/'.$fileName);
+    public function setImageAttribute($image){
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $fileName=rand(1000,9000000).time().'.png';
+        $path=Storage::disk('s3')->put('document_images/'.$fileName,base64_decode($image),'public');
+        $url= Storage::disk('s3')->url('document_images/'.$fileName);
         $this->attributes['image']=$url;
     }
-    public function setThumbnailAttribute($value){
-        $img=Image::make($value)->encode('jpg');
-        $fileName=rand(1000,9000000).time().'.jpg';
-        $path=Storage::put('public/'.$fileName,$img->__toString());
-        $url= Storage::url('public/'.$fileName);       
+    public function setThumbnailAttribute($image){
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $fileName=rand(1000,9000000).time().'-thumb.png';
+        $path=Storage::disk('s3')->put('document_images/'.$fileName,base64_decode($image),'public');
+        $url= Storage::disk('s3')->url('document_images/'.$fileName);       
         $thumbnail=new Thumbnail;
         $thumbnail->url=$url;
         $thumbnail->save();
