@@ -6,6 +6,9 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\UploadSessionController;
+use App\Http\Controllers\PairingCodeController;
+
 
 
 
@@ -35,6 +38,17 @@ Route::group(['middleware'=>['auth:sanctum','corsfix'],'prefix'=>'documents' ],f
  Route::group(['prefix'=>'category' ],function(){
     Route::get('/',[CategoryController::class,'index'])->name('category');        
  });
+ Route::group(['prefix'=>'sessions' ],function(){
+   Route::post('/',[UploadSessionController::class,'index'])->name('session-create');  
+   Route::post('/unlink',[UploadSessionController::class,'unlink'])->name('unlink_session');  
+
+});
+Route::group(['prefix'=>'pairing_codes' ],function(){
+   Route::post('/',[PairingCodeController::class,'index'])->name('pairing_code_create');  
+   Route::post('/link',[PairingCodeController::class,'link'])->name('link_pairing_code');  
+   Route::get('/isLinked',[PairingCodeController::class,'isLinked'])->name('check_linked');  
+
+});
  Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::get('/search/{id}',[SearchController::class,'index']);        
     Route::post('/search',[SearchController::class,'create']);        
