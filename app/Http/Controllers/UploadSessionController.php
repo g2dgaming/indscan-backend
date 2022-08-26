@@ -8,6 +8,7 @@ use Auth;
 use \App\Models\User;
 use DB;
 use Log;
+use Validator;
 class UploadSessionController extends Controller
 {
     public function index(Request $request){
@@ -31,5 +32,19 @@ class UploadSessionController extends Controller
         return response()->json([
             'success'=>$success>0
         ]);
+    }
+    public function delete($id){
+        $response=[
+            'success'=>false
+        ];
+        $validator = Validator::make(['id'=>$id], [
+            'id'=>'required|exists:upload_sessions'
+        ]);
+        if(!$validator->fails()){
+            $done=UploadSession::find($id)->delete();
+            DB::table('links')->where('upload_session_id',$id)->delete();
+            $response['success']=$done;
+        }
+        return response()->json($response);
     }
 }

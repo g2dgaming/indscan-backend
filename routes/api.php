@@ -40,13 +40,14 @@ Route::group(['middleware'=>['auth:sanctum'],'prefix'=>'documents' ],function(){
  Route::group(['middleware'=>['auth:sanctum'],'prefix'=>'sessions' ],function(){
    Route::post('/',[UploadSessionController::class,'index'])->name('session-create');  
    Route::post('/unlink',[UploadSessionController::class,'unlink'])->name('unlink_session');  
+   Route::delete('/{id}',[UploadSessionController::class,'delete'])->name('delete_session');  
+
 
 });
 Route::group(['middleware'=>['auth:sanctum'],'prefix'=>'pairing_codes' ],function(){
    Route::post('/',[PairingCodeController::class,'index'])->name('pairing_code_create');  
    Route::post('/link',[PairingCodeController::class,'link'])->name('link_pairing_code');  
    Route::get('/isLinked',[PairingCodeController::class,'isLinked'])->name('check_linked');  
-
 });
  Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::get('/search/{id}',[SearchController::class,'index']);        

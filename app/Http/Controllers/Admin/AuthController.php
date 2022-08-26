@@ -81,7 +81,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'User Logged In Successfully',
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'token' => $user->createToken("Temp Device Token")->plainTextToken
             ], 200);
 
         } catch (\Throwable $th) {
@@ -108,14 +108,18 @@ class AuthController extends Controller
         $google2fa = new Google2FA();
         $user=Auth::user();
         $secret=$request['secret_key'];
-        $valid = $google2fa->verifyKey($user->google2fa_secret, $secret,0);
-        if($valid && !$user->has_setup_2fa){
-            $user->has_setup_2fa=true;
-            $user->{'2fa_verified_at'}=\Carbon\Carbon::now();
-            $user->save();
+        $response=[];
+        $valid = $google2fa->verifyKey($user->google2fa_secret, $secret,0);        
+        //$valid=true;
+        if($valid ){
+            if(!$user->has_setup_2fa){
+                $user->has_setup_2fa=true;
+                $user->{'2fa_verified_at'}=\Carbon\Carbon::now();
+                $user->save();
+            }
+            $response['token'] =$user->createToken("DEVICE API TOKEN")->plainTextToken;            
         }
-        return response()->json([
-            'success'=>$valid,
-        ]);
+        $response['success']=$valid;
+        return response()->json($response);
     }
 }

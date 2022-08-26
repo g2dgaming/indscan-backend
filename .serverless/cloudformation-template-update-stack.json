@@ -209,7 +209,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/app/dev/1661464572408-2022-08-25T21:56:12.408Z/app.zip"
+          "S3Key": "serverless/app/dev/1661504707606-2022-08-26T09:05:07.606Z/app.zip"
         },
         "Handler": "public/index.php",
         "Runtime": "provided.al2",
@@ -251,7 +251,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/app/dev/1661464572408-2022-08-25T21:56:12.408Z/app.zip"
+          "S3Key": "serverless/app/dev/1661504707606-2022-08-26T09:05:07.606Z/app.zip"
         },
         "Handler": "worker.php",
         "Runtime": "provided.al2",
@@ -286,24 +286,24 @@
         "JobsWorkerLogGroup"
       ]
     },
-    "ApiLambdaVersionA4svbUSUSZymFGaPChETRGnJw567vf6rq1KaxeQ": {
+    "ApiLambdaVersionRrZ0LT9lzFyfxIZQD4RgKeNgb0K9A2slAM4k3lvC4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "QEx2ejo5TAXNsh7dIyglKcXZUn0oblfdibbpzCxJGN4="
+        "CodeSha256": "4LYAa1cKLLXj4XJY79CZyfEi2uTwTi3Ojk0IrUEo9hc="
       }
     },
-    "JobsWorkerLambdaVersionWdO1f2g04pJQYPjYVFBw9TMXtvCbHdDL34XRtScmGM": {
+    "JobsWorkerLambdaVersionRm20P8sZrJO1J2RrLU9IGuhOBnbHVU2UCIl1jtrCc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "JobsWorkerLambdaFunction"
         },
-        "CodeSha256": "QEx2ejo5TAXNsh7dIyglKcXZUn0oblfdibbpzCxJGN4="
+        "CodeSha256": "4LYAa1cKLLXj4XJY79CZyfEi2uTwTi3Ojk0IrUEo9hc="
       }
     },
     "JobsWorkerEventSourceMappingSQSJobsQueueCEDBAE3E": {
@@ -491,7 +491,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionA4svbUSUSZymFGaPChETRGnJw567vf6rq1KaxeQ"
+        "Ref": "ApiLambdaVersionRrZ0LT9lzFyfxIZQD4RgKeNgb0K9A2slAM4k3lvC4"
       },
       "Export": {
         "Name": "sls-app-dev-ApiLambdaFunctionQualifiedArn"
@@ -500,7 +500,7 @@
     "JobsWorkerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "JobsWorkerLambdaVersionWdO1f2g04pJQYPjYVFBw9TMXtvCbHdDL34XRtScmGM"
+        "Ref": "JobsWorkerLambdaVersionRm20P8sZrJO1J2RrLU9IGuhOBnbHVU2UCIl1jtrCc"
       },
       "Export": {
         "Name": "sls-app-dev-JobsWorkerLambdaFunctionQualifiedArn"

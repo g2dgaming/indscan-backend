@@ -26,6 +26,9 @@ class Document extends Model
         $documentData->englishText=$data['englishText'];
         $documentData->hindiText=$data['hindiText'];
         $documentData->thumbnail=$data['thumb'];
+        if(isset($data['name'])){
+            $documentData->name=$data['name'];
+        }
         $documentData->save();
         if($documentData->save()){
             $entities=$data['entities'];
