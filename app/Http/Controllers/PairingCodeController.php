@@ -50,6 +50,7 @@ class PairingCodeController extends Controller
         
     }
     public function isLinked(Request $request){
+        Log::info($request->all());
         return response()->json([
             'is_linked'=> DB::table('links')->where('upload_session_id',$request['session_id'])->where('pairing_code_id',$request['pairing_code'])->exists()
         ]);

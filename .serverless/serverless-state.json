@@ -245,7 +245,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/app/dev/1661419689943-2022-08-25T09:28:09.943Z/app.zip"
+                "S3Key": "serverless/app/dev/1661464572408-2022-08-25T21:56:12.408Z/app.zip"
               },
               "Handler": "public/index.php",
               "Runtime": "provided.al2",
@@ -287,7 +287,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/app/dev/1661419689943-2022-08-25T09:28:09.943Z/app.zip"
+                "S3Key": "serverless/app/dev/1661464572408-2022-08-25T21:56:12.408Z/app.zip"
               },
               "Handler": "worker.php",
               "Runtime": "provided.al2",
@@ -322,24 +322,24 @@
               "JobsWorkerLogGroup"
             ]
           },
-          "ApiLambdaVersionxu7CeEU7PSPz1XxZIEZrTpMNodGhVYptjsCZIqBVfY": {
+          "ApiLambdaVersionA4svbUSUSZymFGaPChETRGnJw567vf6rq1KaxeQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "z2u724P43hIp0D1VaeZdFQ74lNWrzyC6UKoQN/yBpNk="
+              "CodeSha256": "QEx2ejo5TAXNsh7dIyglKcXZUn0oblfdibbpzCxJGN4="
             }
           },
-          "JobsWorkerLambdaVersionzxukLdROjRRgXNLlw0Dzhgh6gWR7KLhnhPJnutW7IM": {
+          "JobsWorkerLambdaVersionWdO1f2g04pJQYPjYVFBw9TMXtvCbHdDL34XRtScmGM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "JobsWorkerLambdaFunction"
               },
-              "CodeSha256": "z2u724P43hIp0D1VaeZdFQ74lNWrzyC6UKoQN/yBpNk="
+              "CodeSha256": "QEx2ejo5TAXNsh7dIyglKcXZUn0oblfdibbpzCxJGN4="
             }
           },
           "JobsWorkerEventSourceMappingSQSJobsQueueCEDBAE3E": {
@@ -524,7 +524,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionxu7CeEU7PSPz1XxZIEZrTpMNodGhVYptjsCZIqBVfY"
+              "Ref": "ApiLambdaVersionA4svbUSUSZymFGaPChETRGnJw567vf6rq1KaxeQ"
             },
             "Export": {
               "Name": "sls-app-dev-ApiLambdaFunctionQualifiedArn"
@@ -533,7 +533,7 @@
           "JobsWorkerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "JobsWorkerLambdaVersionzxukLdROjRRgXNLlw0Dzhgh6gWR7KLhnhPJnutW7IM"
+              "Ref": "JobsWorkerLambdaVersionWdO1f2g04pJQYPjYVFBw9TMXtvCbHdDL34XRtScmGM"
             },
             "Export": {
               "Name": "sls-app-dev-JobsWorkerLambdaFunctionQualifiedArn"
@@ -707,7 +707,7 @@
         "memory": 1024,
         "runtime": "provided.al2",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionxu7CeEU7PSPz1XxZIEZrTpMNodGhVYptjsCZIqBVfY"
+        "versionLogicalId": "ApiLambdaVersionA4svbUSUSZymFGaPChETRGnJw567vf6rq1KaxeQ"
       },
       "jobsWorker": {
         "handler": "worker.php",
@@ -732,7 +732,7 @@
         "memory": 1024,
         "runtime": "provided.al2",
         "vpc": {},
-        "versionLogicalId": "JobsWorkerLambdaVersionzxukLdROjRRgXNLlw0Dzhgh6gWR7KLhnhPJnutW7IM"
+        "versionLogicalId": "JobsWorkerLambdaVersionWdO1f2g04pJQYPjYVFBw9TMXtvCbHdDL34XRtScmGM"
       }
     },
     "resources": {
@@ -827,7 +827,7 @@
             "Ref": "CacheTable"
           },
           "QUEUE_CONNECTION": "sqs",
-          "SQS_QUEUE": "${Token[TOKEN.224]}",
+          "SQS_QUEUE": "${Token[TOKEN.227]}",
           "AWS_BUCKET": {
             "Ref": "indscan"
           }
@@ -853,7 +853,7 @@
                 "Effect": "Allow",
                 "Action": "sqs:SendMessage",
                 "Resource": [
-                  "${Token[TOKEN.236]}"
+                  "${Token[TOKEN.239]}"
                 ]
               }
             ]
@@ -918,7 +918,7 @@
           "events": [
             {
               "sqs": {
-                "arn": "${Token[TOKEN.236]}",
+                "arn": "${Token[TOKEN.239]}",
                 "batchSize": 1,
                 "maximumBatchingWindow": 0,
                 "functionResponseType": "ReportBatchItemFailures"
@@ -940,7 +940,7 @@
             "events": [
               {
                 "sqs": {
-                  "arn": "${Token[TOKEN.236]}",
+                  "arn": "${Token[TOKEN.239]}",
                   "batchSize": 1,
                   "maximumBatchingWindow": 0,
                   "functionResponseType": "ReportBatchItemFailures"
@@ -964,7 +964,7 @@
     "artifact": "/Users/g2dgaming/BackendProjects/indscan-backend/.serverless/app.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/app/dev/1661419689943-2022-08-25T09:28:09.943Z",
+    "artifactDirectoryName": "serverless/app/dev/1661464572408-2022-08-25T21:56:12.408Z",
     "artifact": "app.zip"
   }
 }

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use PragmaRX\Google2FA\Google2FA;
 
 class AuthController extends Controller
 {
@@ -90,20 +91,31 @@ class AuthController extends Controller
             ], 500);
         }
     }
-    public function testLogin(Request $request){
-        if($request['phone_number'] == '7014748022' && $request['otp'] == '123456'){
-            $user = User::first();
-            return response()->json([
-                'status' => true,
-                'message' => 'User Logged In Successfully',
-                'token' => $user->createToken("API TOKEN")->plainTextToken
-            ], 200);     
+    public function handle2Fa(Request $request){
+        $google2fa = new Google2FA();
+        $response=['success'=>false];
+        $user=Auth::user();
+        if(!$user->has_setup_2fa){
+            $key=$google2fa->generateSecretKey(32);            
+            $user->google2fa_secret=$key;
+            $response['success']=true;
+            $response['secret_key']=$key;
+            $user->save();
         }
-        else{
-            return response()->json([
-                'status' => false,
-            ], 401);    
+        return response()->json($response);
+    }
+    public function verify2Fa(Request $request){
+        $google2fa = new Google2FA();
+        $user=Auth::user();
+        $secret=$request['secret_key'];
+        $valid = $google2fa->verifyKey($user->google2fa_secret, $secret,0);
+        if($valid && !$user->has_setup_2fa){
+            $user->has_setup_2fa=true;
+            $user->{'2fa_verified_at'}=\Carbon\Carbon::now();
+            $user->save();
         }
-          
+        return response()->json([
+            'success'=>$valid,
+        ]);
     }
 }

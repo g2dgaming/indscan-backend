@@ -28,8 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/test/login', [AuthController::class, 'testLogin'])->name('login2');
-Route::group(['middleware'=>['auth:sanctum','corsfix'],'prefix'=>'documents' ],function(){
+Route::group(['middleware'=>['auth:sanctum'],'prefix'=>'documents' ],function(){
     Route::post('/',[DocumentController::class,'index'])->name('document-create');        
     Route::post('/{id}',[DocumentController::class,'updateDocument'])->name('document-queue');       
     Route::get('/',[DocumentController::class,'getAll']);
@@ -54,3 +53,7 @@ Route::group(['middleware'=>['auth:sanctum'],'prefix'=>'pairing_codes' ],functio
     Route::post('/search',[SearchController::class,'create']);        
 
  });
+ Route::group(['middleware'=>['auth:sanctum'],'prefix'=>'users'],function(){
+   Route::get('/2fa',[AuthController::class,'handle2Fa']);        
+   Route::post('/2fa',[AuthController::class,'verify2Fa']);        
+});
